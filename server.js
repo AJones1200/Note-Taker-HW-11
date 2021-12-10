@@ -28,6 +28,8 @@ app.post('/api/notes', (req, res) => {
             text, 
             id: uuid(),
         }
+        const noteString = JSON.stringify(newNote);
+        fs.writeFile(``)
     }
 })
 
