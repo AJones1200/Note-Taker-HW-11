@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const util = require('util');
 const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 const path = require('path');
 const uuid = require('./uuid')
 
@@ -25,8 +26,21 @@ app.get('/api/notes', async (req, res) => {
     var notes = await readFileAsync('./db/db.json', 'utf8')
     notes = JSON.parse(notes)
     res.json(notes)
-}
-)
+})
+
+app.delete('/api/notes/:id', async (req, res) => {
+    var notes = await readFileAsync('./db/db.json', 'utf8')
+    notes = JSON.parse(notes)
+    var newNoteArray = notes.filter(note => {
+        if(note.id !== req.params.id) {
+            return note
+        }
+    })
+    const noteString = JSON.stringify(newNoteArray);
+    await writeFileAsync(`./db/db.json`, noteString) 
+    res.json({ok:true})
+})
+
 
 app.post('/api/notes', async (req, res) => {
     console.info(`${req.method} post request recieved to add note`
